@@ -7,16 +7,13 @@ app.set('rootDirectory', __dirname);
 require('./configure.js')(app);
 app.use('/',require('./routes')(app));
 
-var server = require('http').createServer(app);
+var server = require('http').Server(app);
 
 // socket.io
 var io = require('socket.io')(server);
 
-io.on('connection', function(socket){
-  socket.on('chat message', function(msg){
-    io.emit('chat message', msg);
-  });
-});
+var ChatServer = require('./chat/server.js');
+var chatServer = new ChatServer(io);
 
 server.listen(app.get('port'), function(){
   console.log('listening on *:' + app.get('port'));

@@ -14,16 +14,18 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body>
-    <div class="container">
+  <body ng-app="chatApp">
+    <div class="container" ng-controller="AppCtrl as ctrl">
       <div class="jumbotron">
-        <h1>A soon to be chat client!</h1>
       </div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-socket-io/socket.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
