@@ -75,7 +75,7 @@ describe('Chat Server', function() {
               var message = 'testing my server';
               client2.emit(EVENTS.SEND_MESSAGE, {message: message});
               client.on(EVENTS.SEND_MESSAGE, function(data) {
-                expect(data.message).to.equal(message);
+                expect(data).to.deep.equal({message: message, from: 'victor2'});
                 client.disconnect();
                 client2.disconnect();
                 done();

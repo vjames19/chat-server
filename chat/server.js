@@ -58,7 +58,7 @@ Server.prototype.setResponseListeners = function(user) {
 
     var message = data.message;
     if (!_.isEmpty(message)) {
-      socket.broadcast.emit(EVENTS.SEND_MESSAGE, {message: message})
+      socket.broadcast.emit(EVENTS.SEND_MESSAGE, {message: message, from: user.username})
     }
   });
 
