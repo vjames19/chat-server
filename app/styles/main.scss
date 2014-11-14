@@ -29,6 +29,10 @@ html, body {
     padding-bottom: 5px;
     border-bottom: 1px solid #B3A9A9;
 
+    .chat-info {
+      text-align: center;
+    }
+
     .chat-body {
       overflow: hidden;
       overflow-wrap: break-word;

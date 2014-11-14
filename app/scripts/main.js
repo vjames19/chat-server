@@ -49,7 +49,7 @@
     };
 
     self.addInfoMessage = function(message) {
-      self.messages.push({message: message, type: 'info'})
+      self.messages.push({message: message, type: 'info'});
     };
 
     chatSocket.on(CHAT_EVENTS.LOGIN_SUCCESS, function() {
@@ -61,10 +61,10 @@
     });
 
     chatSocket.on(CHAT_EVENTS.USER_JOINED, function(data) {
-      self.addInfoMessage(data.username + 'joined.')
+      self.addInfoMessage(data.username + 'joined.');
     });
 
-    chatSocket.on(CHAT_EVENTS.USER_LEFT, function() {
+    chatSocket.on(CHAT_EVENTS.USER_LEFT, function(data) {
       self.addInfoMessage(data.username + ' left.');
     });
 
