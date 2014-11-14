@@ -97,17 +97,20 @@ gulp.task('server', ['watch'], function () {
 });
 
 gulp.task('test', function (cb) {
-  gulp.src(['chat/**/*.js'])
+  gulp.src(['lib/**/*.js'])
       .pipe($.istanbul()) // Covering files
       .on('finish', function () {
         gulp.src(['test/**/*.js'])
             .pipe($.mocha())
             .pipe($.istanbul.writeReports()) // Creating the reports after tests runned
             .on('end', function() {
-              gulp.src('coverage/lcov.info')
-                  .pipe($.coveralls())
-                  .on('end', cb);
-
+              if (process.env.COVERALLS_REPO_TOKEN) { // Sends coverage information to coveralls.
+                gulp.src('./coverage/lcov.info')
+                    .pipe($.coveralls())
+                    .on('end', cb);
+              } else {
+                cb();
+              }
             });
       });
 });
