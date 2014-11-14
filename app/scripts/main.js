@@ -19,14 +19,43 @@
     DISCONNECT: 'disconnect'
   });
 
-  app.factory('chatSocket', function(socketFactory) {
-    return socketFactory({
+  app.service('ChatService', function(socketFactory, CHAT_EVENTS) {
+    var chatSocket = socketFactory({
       prefix: null,
       ioSocket: io.connect()
     });
+
+    this.login = function(username) {
+      chatSocket.emit(CHAT_EVENTS.LOGIN, {username: username});
+    };
+
+    this.sendMessage = function(message) {
+      chatSocket.emit(CHAT_EVENTS.SEND_MESSAGE, {message: message});
+    };
+
+    this.handleLoginSuccess = function(handler) {
+      chatSocket.addListener(CHAT_EVENTS.LOGIN_SUCCESS, handler);
+    };
+
+    this.handleLoginUserTaken = function(handler) {
+      chatSocket.on(CHAT_EVENTS.LOGIN_USER_TAKEN, handler);
+    };
+
+
+    this.handleUserJoined = function(handler) {
+      chatSocket.on(CHAT_EVENTS.USER_JOINED, handler);
+    };
+
+    this.handleUserLeft = function(handler) {
+      chatSocket.on(CHAT_EVENTS.USER_LEFT, handler);
+    };
+
+    this.handleIncomingMessage = function(handler) {
+      chatSocket.on(CHAT_EVENTS.SEND_MESSAGE, handler);
+    };
   });
 
-  app.controller('AppCtrl', function(chatSocket, CHAT_EVENTS) {
+  app.controller('AppCtrl', function(ChatService) {
     var self = this;
     self.needToLogin = true;
     self.username = '';
@@ -37,42 +66,44 @@
         alert('Username should not be empty');
         return;
       }
-      chatSocket.emit(CHAT_EVENTS.LOGIN, {username: username});
+
+      ChatService.login(username);
     };
 
     self.sendMessage = function(messageText) {
+      ChatService.sendMessage(messageText);
       var message = {message: messageText};
       self.messages.push(message);
       self.messageText = '';
-
-      chatSocket.emit(CHAT_EVENTS.SEND_MESSAGE, message);
     };
 
     self.addInfoMessage = function(message) {
       self.messages.push({message: message, type: 'info'});
     };
 
-    chatSocket.on(CHAT_EVENTS.LOGIN_SUCCESS, function() {
+    // Event Handlers
+    ChatService.handleLoginSuccess(function() {
       self.needToLogin = false;
     });
 
-    chatSocket.on(CHAT_EVENTS.LOGIN_USER_TAKEN, function() {
+    ChatService.handleLoginUserTaken(function() {
       alert('The username you specifed is taken');
     });
 
-    chatSocket.on(CHAT_EVENTS.USER_JOINED, function(data) {
+    ChatService.handleUserJoined(function(data) {
       self.addInfoMessage(data.username + ' joined.');
     });
 
-    chatSocket.on(CHAT_EVENTS.USER_LEFT, function(data) {
+    ChatService.handleUserLeft(function(data) {
       self.addInfoMessage(data.username + ' left.');
     });
 
-    chatSocket.on(CHAT_EVENTS.SEND_MESSAGE, function(data) {
+    ChatService.handleIncomingMessage(function(data) {
       self.messages.push({message: data.message, from: data.from});
     });
   });
 
+  // Keeps the scrolling window scrolled to the bottom, watching for changes in the given watchCollection.
   app.directive('scrollToBottom', function() {
     return {
       restrict: 'A',
