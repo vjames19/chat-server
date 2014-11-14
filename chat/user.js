@@ -16,10 +16,7 @@ UserManager.prototype.isAvailable = function(username) {
 UserManager.prototype.add = function(user) {
   if (this.isAvailable(user.username)) {
     this.users[user.username] = user;
-    return true;
   }
-
-  return false;
 };
 
 UserManager.prototype.remove = function(user) {

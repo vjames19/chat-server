@@ -98,3 +98,14 @@ gulp.task('server', ['watch'], function () {
     console.log('restarted!');
   });
 });
+
+gulp.task('test', function (cb) {
+  gulp.src(['chat/**/*.js'])
+      .pipe($.istanbul()) // Covering files
+      .on('finish', function () {
+        gulp.src(['test/**/*.js'])
+            .pipe($.mocha())
+            .pipe($.istanbul.writeReports()) // Creating the reports after tests runned
+            .on('end', cb);
+      });
+});

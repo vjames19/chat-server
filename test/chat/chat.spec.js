@@ -21,17 +21,15 @@ var connect = function(cb) {
 };
 
 describe('Chat Server', function() {
-  before(function() {
+  beforeEach(function() {
     io.listen(3000);
+    chatServer = new ChatServer(io);
   });
 
-  after(function() {
+  afterEach(function() {
     io.close();
   });
 
-  beforeEach(function() {
-    chatServer = new ChatServer(io);
-  });
   describe('login', function() {
     it('should allow the user to login with a non-existent user and emit the usernames', function(done) {
       var client = connect(function() {
@@ -79,6 +77,25 @@ describe('Chat Server', function() {
             });
           });
         });
+
+        it('should not broadcast an empty message', function(done) {
+          var client = connect(function() {
+            var client2 = connect(function() {
+              client.emit(EVENTS.LOGIN, {username: 'victor'});
+              client2.emit(EVENTS.LOGIN, {username: 'victor2'});
+
+              var message = '';
+              client.on(EVENTS.SEND_MESSAGE, function() {
+                throw new Error('Should not be called');
+              });
+
+              client2.emit(EVENTS.SEND_MESSAGE, {message: message});
+              client.disconnect();
+              client2.disconnect();
+              done();
+            });
+          });
+        });
       });
 
       describe('disconnect', function() {
@@ -102,12 +119,9 @@ describe('Chat Server', function() {
 
     describe('unsuccessful: ', function() {
       describe('username taken', function() {
-        it('should emit a username taken event and not a login success', function() {
+        it('should emit a username taken event and not a login success', function(done) {
           var client = connect(function() {
             var client2 = connect(function() {
-              client.emit(EVENTS.LOGIN, {username: 'victor'});
-              client2.emit(EVENTS.LOGIN, {username: 'victor'});
-
               client2.on(EVENTS.LOGIN_SUCCESS, function() {
                 throw new Error('Login success should not be called');
               });
@@ -117,6 +131,9 @@ describe('Chat Server', function() {
                 client2.disconnect();
                 done();
               });
+
+              client.emit(EVENTS.LOGIN, {username: 'victor'});
+              client2.emit(EVENTS.LOGIN, {username: 'victor'});
             });
           });
         });
