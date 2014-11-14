@@ -46,7 +46,10 @@
                 <div scroll-to-bottom watch-collection="ctrl.messages" class="panel-body">
                   <ul class="chat">
                     <li ng-repeat="message in ctrl.messages">
-                      <div class="chat-body" ng-class="{user: !message.from}">
+                      <div class="chat-info" ng-if="message.type === 'info'">
+                        <strong><p>{{ message.message }}</p></strong>
+                      </div>
+                      <div class="chat-body" ng-class="{user: !message.from}" ng-if="message.type !== 'info'">
                         <div class="header">
                           <strong class="primary-font">
                             <span ng-if="message.from">{{ message.from }}</span>

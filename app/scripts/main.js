@@ -48,7 +48,11 @@
       chatSocket.emit(CHAT_EVENTS.SEND_MESSAGE, message);
     };
 
-    chatSocket.on(CHAT_EVENTS.LOGIN_SUCCESS, function(data) {
+    self.addInfoMessage = function(message) {
+      self.messages.push({message: message, type: 'info'})
+    };
+
+    chatSocket.on(CHAT_EVENTS.LOGIN_SUCCESS, function() {
       self.needToLogin = false;
     });
 
@@ -57,15 +61,15 @@
     });
 
     chatSocket.on(CHAT_EVENTS.USER_JOINED, function(data) {
-      self.message.push({message: data.username + ' joined.', type: 'info'});
+      self.addInfoMessage(data.username + 'joined.')
     });
 
-    chatSocket.on(CHAT_EVENTS.USER_LEFT, function(data) {
-      self.message.push({message: data.username + ' left.', type: 'info'});
+    chatSocket.on(CHAT_EVENTS.USER_LEFT, function() {
+      self.addInfoMessage(data.username + ' left.');
     });
 
     chatSocket.on(CHAT_EVENTS.SEND_MESSAGE, function(data) {
-      self.messages.push(new Message(data));
+      self.messages.push({message: data.message, from: data.from});
     });
   });
 
@@ -80,6 +84,6 @@
           elem.scrollTop(elem[0].scrollHeight);
         });
       }
-    }
+    };
   });
 })(window.angular, window.io);
