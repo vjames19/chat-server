@@ -27,13 +27,59 @@
   });
 
   app.controller('AppCtrl', function(chatSocket, CHAT_EVENTS) {
+    var self = this;
+    self.needToLogin = true;
+    self.username = '';
+    self.messages = [];
+
+    self.login = function(username) {
+      if (!username) {
+        alert('Username should not be empty');
+        return;
+      }
+      chatSocket.emit(CHAT_EVENTS.LOGIN, {username: username});
+    };
+
+    self.sendMessage = function(messageText) {
+      var message = {message: messageText};
+      self.messages.push(message);
+      self.messageText = '';
+
+      chatSocket.emit(CHAT_EVENTS.SEND_MESSAGE, message);
+    };
+
     chatSocket.on(CHAT_EVENTS.LOGIN_SUCCESS, function(data) {
-      console.log('login:success', data);
+      self.needToLogin = false;
     });
 
-    chatSocket.on(CHAT_EVENTS.LOGIN_USER_TAKEN, function(data) {
-      console.log('login:usernameTaken', data);
+    chatSocket.on(CHAT_EVENTS.LOGIN_USER_TAKEN, function() {
+      alert('The username you specifed is taken');
     });
-    chatSocket.emit(CHAT_EVENTS.LOGIN, {username: 'victor'});
+
+    chatSocket.on(CHAT_EVENTS.USER_JOINED, function(data) {
+      self.message.push({message: data.username + ' joined.', type: 'info'});
+    });
+
+    chatSocket.on(CHAT_EVENTS.USER_LEFT, function(data) {
+      self.message.push({message: data.username + ' left.', type: 'info'});
+    });
+
+    chatSocket.on(CHAT_EVENTS.SEND_MESSAGE, function(data) {
+      self.messages.push(new Message(data));
+    });
+  });
+
+  app.directive('scrollToBottom', function() {
+    return {
+      restrict: 'A',
+      scope: {
+        watchCollection: '='
+      },
+      link: function($scope, elem) {
+        $scope.$watchCollection('watchCollection', function() {
+          elem.scrollTop(elem[0].scrollHeight);
+        });
+      }
+    }
   });
 })(window.angular, window.io);

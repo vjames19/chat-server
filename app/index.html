@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Chat server</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
 
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
@@ -15,10 +15,71 @@
     <!-- endbuild -->
   </head>
   <body ng-app="chatApp">
-    <div class="container" ng-controller="AppCtrl as ctrl">
-      <div class="jumbotron">
+      <div id="wrap" ng-controller="AppCtrl as ctrl">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6 col-md-offset-3 col-xs-12">
+
+              <!-- Login form-->
+              <div class="panel panel-primary" ng-show="ctrl.needToLogin">
+                <div class="panel-heading">
+                  <h3 class="panel-title">Select a username!</h3>
+                </div>
+                <div class="panel-body">
+                  <form ng-submit="ctrl.login(ctrl.username)" role="form">
+                    <fieldset>
+                      <div class="form-group">
+                        <input class="form-control" placeholder="username" name="username" type="text" autofocus=""
+                            ng-model="ctrl.username">
+                      </div>
+                      <button type="submit" class="btn btn-success">Login</button>
+                    </fieldset>
+                  </form>
+                </div>
+              </div>
+
+              <!-- Chat -->
+              <div class="chat-panel panel panel-primary" ng-hide="ctrl.needToLogin">
+                <div class="panel-heading">
+                  <span class="glyphicon glyphicon-comment"></span> Chat
+                </div>
+                <div scroll-to-bottom watch-collection="ctrl.messages" class="panel-body">
+                  <ul class="chat">
+                    <li ng-repeat="message in ctrl.messages">
+                      <div class="chat-body" ng-class="{user: !message.from}">
+                        <div class="header">
+                          <strong class="primary-font">
+                            <span ng-if="message.from">{{ message.from }}</span>
+                            <span ng-if="!message.from">{{ ctrl.username }}</span>
+                          </strong>
+                        </div>
+                        <div>
+                          <p>{{ message.message }}</p>
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="panel-footer">
+                  <form ng-submit="ctrl.sendMessage(ctrl.messageText)">
+                    <div class="input-group">
+                      <input type="text"
+                             class="form-control input-sm"
+                             placeholder="Type your message here..."
+                             ng-model="ctrl.messageText"/>
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-warning btn-sm" id="btn-chat">Send</button>
+                    </span>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
       </div>
-    </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <!-- build:js scripts/vendor.js -->

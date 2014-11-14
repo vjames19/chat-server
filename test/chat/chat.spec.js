@@ -20,10 +20,6 @@ var connect = function(cb) {
   return socket;
 };
 
-var onConnect = function(socket, handleer) {
-  socket.on('connect', handler);
-};
-
 describe('Chat Server', function() {
   before(function() {
     io.listen(3000);

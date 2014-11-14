@@ -5,7 +5,7 @@ app.set('rootDirectory', __dirname);
 
 // express configuration
 require('./configure.js')(app);
-app.use('/',require('./routes')(app));
+app.use('/', require('./routes')(app));
 
 var server = require('http').Server(app);
 
