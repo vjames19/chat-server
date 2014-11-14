@@ -12,7 +12,7 @@ var server = require('http').Server(app);
 // socket.io
 var io = require('socket.io')(server);
 
-var ChatServer = require('./chat/server.js');
+var ChatServer = require('./lib/chat/server.js');
 var chatServer = new ChatServer(io);
 
 server.listen(app.get('port'), function(){

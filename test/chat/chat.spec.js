@@ -3,8 +3,8 @@ var expect = require('chai').expect;
 var ioClient = require('socket.io-client');
 var io = require('socket.io')();
 
-var ChatServer = require('../../chat/server.js');
-var EVENTS = require('../../chat/events.js');
+var ChatServer = require('../../lib/chat/server.js');
+var EVENTS = require('../../lib/chat/events.js');
 
 var socketURL = 'http://localhost:3000';
 var options ={
