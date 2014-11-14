@@ -97,6 +97,7 @@ gulp.task('server', ['watch'], function () {
 });
 
 gulp.task('test', function (cb) {
+  process.env.NODE_ENV = 'test';
   gulp.src(['lib/**/*.js'])
       .pipe($.istanbul()) // Covering files
       .on('finish', function () {
