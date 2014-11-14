@@ -61,7 +61,7 @@
     });
 
     chatSocket.on(CHAT_EVENTS.USER_JOINED, function(data) {
-      self.addInfoMessage(data.username + 'joined.');
+      self.addInfoMessage(data.username + ' joined.');
     });
 
     chatSocket.on(CHAT_EVENTS.USER_LEFT, function(data) {
